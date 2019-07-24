@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import ga.fliptech.imageeditor.MainActivity;
 import ga.fliptech.imageeditor.R;
 
 public class ModeListAdapter extends RecyclerView.Adapter {
@@ -61,6 +62,7 @@ public class ModeListAdapter extends RecyclerView.Adapter {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MainActivity.setMode(getAdapterPosition());
                     Toast.makeText(context, getAdapterPosition() + " ", Toast.LENGTH_SHORT).show();
                 }
             });
