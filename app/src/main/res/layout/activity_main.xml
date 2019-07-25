@@ -6,13 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ga.fliptech.imageeditor.imageeditor.view.CustomViewPager
-        android:id="@+id/vpContainer"
-        android:layout_width="match_parent"
-        android:layout_height="70dp">
-
-    </ga.fliptech.imageeditor.imageeditor.view.CustomViewPager>
-    
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvModeList"
         android:layout_width="match_parent"
@@ -20,5 +13,13 @@
         android:layout_alignParentBottom="true"
         android:background="#111">
     </androidx.recyclerview.widget.RecyclerView>
+
+    <ga.fliptech.imageeditor.imageeditor.view.CustomViewPager
+        android:id="@+id/vpContainer"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
+    </ga.fliptech.imageeditor.imageeditor.view.CustomViewPager>
 
 </RelativeLayout>

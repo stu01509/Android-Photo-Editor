@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -36,10 +38,18 @@ public class MainActivity extends AppCompatActivity {
     public static final int MODE_TEXT = 4; // 文字貼圖模式
     public static final int MODE_BEAUTY = 5; // 美肌模式
     public static final int MODE_ROTATE = 6; // 旋轉模式
+    public static boolean isEdit = false;
+
+    public StickerFragment mStickerFragment;
+    public PaintFragment mPaintFragment;
+    public FilterFragment mFilterFragment;
+    public TextFragment mTextFragment;
+    public BeautyFragment mBeautyFragment;
+    public RotateFragment mRotateFragment;
 
     Bitmap sourceBitmap;
 
-    RecyclerView rvModeList;
+    public static RecyclerView rvModeList;
     ModeListAdapter modeListAdapter;
     RecyclerView.LayoutManager modeListLayoutManager;
 
@@ -59,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         modeListAdapter = new ModeListAdapter(this);
         rvModeList.setAdapter(modeListAdapter);
 
+        initView();
+
+
         // Mode Select
         modeViewPager = findViewById(R.id.vpContainer);
         initModeViewPager(modeViewPager);
@@ -66,22 +79,43 @@ public class MainActivity extends AppCompatActivity {
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    private void initView() {
+        mStickerFragment = StickerFragment.newInstance();
+        mPaintFragment = PaintFragment.newInstance();
+        mFilterFragment = FilterFragment.newInstance();
+        mTextFragment = TextFragment.newInstance();
+        mBeautyFragment = BeautyFragment.newInstance();
+        mRotateFragment = RotateFragment.newInstance();
+
+    }
+
     private void initModeViewPager(ViewPager viewPager) {
         ModeSelectPagerAdapter modeSelectPagerAdapter = new ModeSelectPagerAdapter(getSupportFragmentManager());
-        modeSelectPagerAdapter.addFragment(new StickerFragment());
-        modeSelectPagerAdapter.addFragment(new PaintFragment());
-        modeSelectPagerAdapter.addFragment(new FilterFragment());
-        modeSelectPagerAdapter.addFragment(new TextFragment());
-        modeSelectPagerAdapter.addFragment(new BeautyFragment());
-        modeSelectPagerAdapter.addFragment(new RotateFragment());
+        modeSelectPagerAdapter.addFragment(mStickerFragment);
+        modeSelectPagerAdapter.addFragment(mPaintFragment);
+        modeSelectPagerAdapter.addFragment(mFilterFragment);
+        modeSelectPagerAdapter.addFragment(mTextFragment);
+        modeSelectPagerAdapter.addFragment(mBeautyFragment);
+        modeSelectPagerAdapter.addFragment(mRotateFragment);
         viewPager.setAdapter(modeSelectPagerAdapter);
     }
 
     public static void setMode(int modeNumber) {
+        isEdit = true;
+        rvModeList.setVisibility(View.INVISIBLE);
+        modeViewPager.setVisibility(View.VISIBLE);
         modeViewPager.setCurrentItem(modeNumber);
     }
 
-
-
-
+    @Override
+    public void onBackPressed() {
+        if (isEdit) {
+            isEdit = false;
+            rvModeList.setVisibility(View.VISIBLE);
+            modeViewPager.setVisibility(View.INVISIBLE);
+            Toast.makeText(this,"返回",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        super.onBackPressed();
+    }
 }
