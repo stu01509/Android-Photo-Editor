@@ -9,23 +9,26 @@
     android:paddingRight="18dp"
     android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/ivModeIcon"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:scaleType="centerInside"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:src="@drawable/ic_launcher_background" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal" >
 
-    <TextView
-        android:id="@+id/tvModeName"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/ivModeIcon"
-        android:layout_gravity="center"
-        android:textColor="#ddd"
-        android:gravity="center"
-        android:textSize="18sp" />
+        <ImageView
+            android:id="@+id/ivModeIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_launcher_background" />
+
+        <TextView
+            android:id="@+id/tvModeName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ivModeIcon"
+            android:textColor="#ddd"
+            android:textSize="18sp" />
+    </LinearLayout>
 
 </RelativeLayout>
