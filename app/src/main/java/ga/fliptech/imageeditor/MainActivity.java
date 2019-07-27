@@ -1,25 +1,16 @@
 package ga.fliptech.imageeditor;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
-
-import java.util.ArrayList;
-
+import ga.fliptech.imageeditor.imageeditor.Sticker.StickerView;
 import ga.fliptech.imageeditor.imageeditor.adapter.ModeListAdapter;
 import ga.fliptech.imageeditor.imageeditor.adapter.ModeSelectPagerAdapter;
 import ga.fliptech.imageeditor.imageeditor.fragment.BeautyFragment;
@@ -28,6 +19,8 @@ import ga.fliptech.imageeditor.imageeditor.fragment.PaintFragment;
 import ga.fliptech.imageeditor.imageeditor.fragment.RotateFragment;
 import ga.fliptech.imageeditor.imageeditor.fragment.StickerFragment;
 import ga.fliptech.imageeditor.imageeditor.fragment.TextFragment;
+import ga.fliptech.imageeditor.imageeditor.imagezoom.ImageViewTouch;
+import ga.fliptech.imageeditor.imageeditor.imagezoom.ImageViewTouchBase;
 import ga.fliptech.imageeditor.imageeditor.view.CustomViewPager;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public BeautyFragment mBeautyFragment;
     public RotateFragment mRotateFragment;
 
+    public ImageViewTouch imageZoom;
     Bitmap sourceBitmap;
 
     public static RecyclerView rvModeList;
@@ -55,10 +49,14 @@ public class MainActivity extends AppCompatActivity {
 
     static CustomViewPager modeViewPager;
 
+    public static StickerView stickerView;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sourceBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wp2284576);
 
         // Mode List
         rvModeList = findViewById(R.id.rvModeList);
@@ -69,12 +67,20 @@ public class MainActivity extends AppCompatActivity {
         modeListAdapter = new ModeListAdapter(this);
         rvModeList.setAdapter(modeListAdapter);
 
-        initView();
+        // Main ImageZoomView
+        imageZoom = findViewById(R.id.imageZoom);
+        imageZoom.setImageBitmap(sourceBitmap);
+        imageZoom.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
 
+        initView();
 
         // Mode Select
         modeViewPager = findViewById(R.id.vpContainer);
         initModeViewPager(modeViewPager);
+
+        // 貼圖畫布預覽
+        stickerView = new StickerView(this);
+        stickerView = findViewById(R.id.stickerView);
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -86,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         mTextFragment = TextFragment.newInstance();
         mBeautyFragment = BeautyFragment.newInstance();
         mRotateFragment = RotateFragment.newInstance();
-
     }
 
     private void initModeViewPager(ViewPager viewPager) {
@@ -113,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             isEdit = false;
             rvModeList.setVisibility(View.VISIBLE);
             modeViewPager.setVisibility(View.INVISIBLE);
-            Toast.makeText(this,"返回",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "返回", Toast.LENGTH_SHORT).show();
             return;
         }
         super.onBackPressed();
