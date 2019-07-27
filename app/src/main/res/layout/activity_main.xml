@@ -2,24 +2,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/wrapperRl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity" >
+
+    <ga.fliptech.imageeditor.imageeditor.imagezoom.ImageViewTouch
+        android:id="@+id/imageZoom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100dp"/>
+
+    <ga.fliptech.imageeditor.imageeditor.Sticker.StickerView
+        android:id="@+id/stickerView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="100dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvModeList"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"
-        android:background="#111">
-    </androidx.recyclerview.widget.RecyclerView>
+        android:background="#111" />
 
     <ga.fliptech.imageeditor.imageeditor.view.CustomViewPager
         android:id="@+id/vpContainer"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
-        android:visibility="gone">
-    </ga.fliptech.imageeditor.imageeditor.view.CustomViewPager>
+        android:visibility="gone" />
 
 </RelativeLayout>
