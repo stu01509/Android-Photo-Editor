@@ -16,7 +16,6 @@ import ga.fliptech.imageeditor.R;
 import ga.fliptech.imageeditor.imageeditor.adapter.StickerListAdapter;
 import ga.fliptech.imageeditor.imageeditor.adapter.StickerTypeListAdapter;
 
-
 public class StickerFragment extends Fragment {
     private static final String TAG = "StickerFragment";
 
@@ -58,7 +57,11 @@ public class StickerFragment extends Fragment {
         // 圖片選擇
         rvStickerList = mView.findViewById(R.id.rvStickerList);
         rvStickerList.setHasFixedSize(true);
+        // RecyclerView Item 快取
+        rvStickerList.setItemViewCacheSize(10);
         rvStickerList.setLayoutManager(new GridLayoutManager(mContext, 4));
+        rvStickerList.setDrawingCacheEnabled(true);
+        rvStickerList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         stickerListAdapter = new StickerListAdapter(mContext);
         rvStickerList.setAdapter(stickerListAdapter);

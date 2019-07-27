@@ -63,7 +63,6 @@ public class ModeListAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View v) {
                     MainActivity.setMode(getAdapterPosition());
-                    Toast.makeText(context, getAdapterPosition() + " ", Toast.LENGTH_SHORT).show();
                 }
             });
         }

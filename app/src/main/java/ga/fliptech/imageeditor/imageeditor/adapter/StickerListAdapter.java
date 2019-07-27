@@ -1,6 +1,8 @@
 package ga.fliptech.imageeditor.imageeditor.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +45,7 @@ public class StickerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         viewHolder.ivSticker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stickerChoose(stickerList.get(position));
+                selectSticker(stickerList.get(position));
             }
         });
     }
@@ -62,9 +64,8 @@ public class StickerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public void stickerChoose(int sticker) {
+    public void selectSticker(int sticker) {
         StickerFragment.newInstance().selectedStickerItem(context, sticker);
-        Toast.makeText(context, "你選擇" + sticker + " 的圖片", Toast.LENGTH_SHORT).show();
     }
 
     public void initSticker(String stickerType) {
