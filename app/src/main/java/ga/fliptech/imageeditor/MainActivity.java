@@ -8,20 +8,26 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+
 import com.bumptech.glide.Glide;
+
 import java.util.LinkedHashMap;
+
 import ga.fliptech.imageeditor.imageeditor.Paint.PaintView;
 import ga.fliptech.imageeditor.imageeditor.Sticker.StickerItem;
 import ga.fliptech.imageeditor.imageeditor.Sticker.StickerTask;
 import ga.fliptech.imageeditor.imageeditor.Sticker.StickerView;
+import ga.fliptech.imageeditor.imageeditor.Text.TextStickerView;
 import ga.fliptech.imageeditor.imageeditor.adapter.ModeListAdapter;
 import ga.fliptech.imageeditor.imageeditor.adapter.ModeSelectPagerAdapter;
 import ga.fliptech.imageeditor.imageeditor.fragment.BeautyFragment;
@@ -66,13 +72,17 @@ public class MainActivity extends AppCompatActivity {
 
     public static StickerView stickerView;
     public static PaintView paintView;
+    public static TextStickerView textStickerView;
 
     private SaveStickersTask saveStickersTask;
     private SavePaintTask savePaintTask;
+    private SaveTextStickerTask saveTextStickerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 鍵盤彈出時 直接覆蓋住當前 layout
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.activity_main);
 
         sourceBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wp2284576);
@@ -105,6 +115,10 @@ public class MainActivity extends AppCompatActivity {
         paintView = new PaintView(this);
         paintView = findViewById(R.id.paintView);
 
+        // 文字貼圖畫布預覽
+        textStickerView = new TextStickerView(this);
+        textStickerView = findViewById(R.id.textStickerView);
+
 
         btnPreview = findViewById(R.id.btnPreview);
         btnPreview.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 processSticker();
                 savePaintImage();
+                saveTextSticker();
             }
         });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -150,6 +165,16 @@ public class MainActivity extends AppCompatActivity {
                 MODE_STATE = MODE_PAINT;
                 break;
             }
+            case MODE_FILTER: {
+//                paintView.setVisibility(View.VISIBLE);
+                MODE_STATE = MODE_FILTER;
+                break;
+            }
+            case MODE_TEXT: {
+                textStickerView.setVisibility(View.VISIBLE);
+                MODE_STATE = MODE_TEXT;
+                break;
+            }
         }
         rvModeList.setVisibility(View.INVISIBLE);
         modeViewPager.setVisibility(View.VISIBLE);
@@ -171,6 +196,15 @@ public class MainActivity extends AppCompatActivity {
 
         savePaintTask = new SavePaintTask(this);
         savePaintTask.execute(sourceBitmap);
+    }
+
+    public void saveTextSticker() {
+        if (saveTextStickerTask != null && !saveTextStickerTask.isCancelled()) {
+            saveTextStickerTask.cancel(true);
+        }
+
+        saveTextStickerTask = new SaveTextStickerTask(this);
+        saveTextStickerTask.execute(sourceBitmap);
     }
 
     public void previewSticker(Bitmap previewSticker) {
@@ -205,6 +239,14 @@ public class MainActivity extends AppCompatActivity {
                     paintView.setVisibility(View.GONE);
                     break;
                 }
+                case MODE_FILTER: {
+//                    paintView.setVisibility(View.GONE);
+                    break;
+                }
+                case MODE_TEXT: {
+                    textStickerView.setVisibility(View.GONE);
+                    break;
+                }
             }
 
             MODE_STATE = MODE_NONE;
@@ -215,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private final class SaveStickersTask extends StickerTask {
+
         public SaveStickersTask(MainActivity activity) {
             super(activity);
         }
@@ -264,6 +307,37 @@ public class MainActivity extends AppCompatActivity {
         public void onPostResult(Bitmap result) {
             previewSticker(result);
             paintView.reset();
+        }
+    }
+
+    private final class SaveTextStickerTask extends StickerTask {
+
+        public SaveTextStickerTask(MainActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        public void handleImage(Canvas canvas, Matrix m) {
+            float[] f = new float[9];
+            m.getValues(f);
+            int dx = (int) f[Matrix.MTRANS_X];
+            int dy = (int) f[Matrix.MTRANS_Y];
+            float scale_x = f[Matrix.MSCALE_X];
+            float scale_y = f[Matrix.MSCALE_Y];
+            canvas.save();
+            canvas.translate(dx, dy);
+            canvas.scale(scale_x, scale_y);
+            //System.out.println("scale = " + scale_x + "       " + scale_y + "     " + dx + "    " + dy);
+            textStickerView.drawText(canvas, textStickerView.layout_x,
+                    textStickerView.layout_y, textStickerView.mScale, textStickerView.mRotateAngle);
+            canvas.restore();
+        }
+
+        @Override
+        public void onPostResult(Bitmap result) {
+            textStickerView.clearTextContent();
+            textStickerView.resetView();
+            previewSticker(result);
         }
     }
 }

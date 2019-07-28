@@ -34,6 +34,13 @@
         android:layout_marginBottom="100dp"
         android:visibility="gone"/>
 
+    <ga.fliptech.imageeditor.imageeditor.Text.TextStickerView
+        android:id="@+id/textStickerView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="100dp"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvModeList"
         android:layout_width="match_parent"
