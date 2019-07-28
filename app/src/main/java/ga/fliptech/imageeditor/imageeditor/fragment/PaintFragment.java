@@ -16,14 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import ga.fliptech.imageeditor.MainActivity;
 import ga.fliptech.imageeditor.R;
-import ga.fliptech.imageeditor.imageeditor.adapter.PaintColorListAdapter;
+import ga.fliptech.imageeditor.imageeditor.adapter.ColorListAdapter;
 
 public class PaintFragment extends Fragment {
     private static final String TAG = "PaintFragment";
 
     private RecyclerView.LayoutManager colorListLayoutManager;
     public static RecyclerView rvColorList;
-    public static PaintColorListAdapter paintColorListAdapter;
+    public static ColorListAdapter paintColorListAdapter;
     SeekBar sbLineWidth;
     TextView tvUnit;
     ImageView ivEraser;
@@ -57,7 +57,7 @@ public class PaintFragment extends Fragment {
         rvColorList.setHasFixedSize(true);
         colorListLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rvColorList.setLayoutManager(colorListLayoutManager);
-        paintColorListAdapter = new PaintColorListAdapter();
+        paintColorListAdapter = new ColorListAdapter();
         rvColorList.setAdapter(paintColorListAdapter);
 
         // 尺寸資訊
