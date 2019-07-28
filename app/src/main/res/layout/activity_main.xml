@@ -24,7 +24,15 @@
         android:id="@+id/stickerView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginBottom="100dp"/>
+        android:layout_marginBottom="100dp"
+        android:visibility="gone"/>
+
+    <ga.fliptech.imageeditor.imageeditor.Paint.PaintView
+        android:id="@+id/paintView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="100dp"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvModeList"

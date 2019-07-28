@@ -1,8 +1,5 @@
 package ga.fliptech.imageeditor;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,14 +11,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
-
 import com.bumptech.glide.Glide;
-
 import java.util.LinkedHashMap;
-
+import ga.fliptech.imageeditor.imageeditor.Paint.PaintView;
 import ga.fliptech.imageeditor.imageeditor.Sticker.StickerItem;
 import ga.fliptech.imageeditor.imageeditor.Sticker.StickerTask;
 import ga.fliptech.imageeditor.imageeditor.Sticker.StickerView;
@@ -39,12 +36,14 @@ import ga.fliptech.imageeditor.imageeditor.view.CustomViewPager;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int MODE_STICKERS = 1; // 貼圖模式
-    public static final int MODE_PAINT = 2; // 繪圖模式
-    public static final int MODE_FILTER = 3; // 濾鏡模式
-    public static final int MODE_TEXT = 4; // 文字貼圖模式
-    public static final int MODE_BEAUTY = 5; // 美肌模式
-    public static final int MODE_ROTATE = 6; // 旋轉模式
+    public static final int MODE_NONE = -1;
+    public static final int MODE_STICKERS = 0; // 貼圖模式
+    public static final int MODE_PAINT = 1; // 繪圖模式
+    public static final int MODE_FILTER = 2; // 濾鏡模式
+    public static final int MODE_TEXT = 3; // 文字貼圖模式
+    public static final int MODE_BEAUTY = 4; // 美肌模式
+    public static final int MODE_ROTATE = 5; // 旋轉模式
+    public static int MODE_STATE; // 紀錄目前的模式
     public static boolean isEdit = false;
 
     public StickerFragment mStickerFragment;
@@ -66,7 +65,10 @@ public class MainActivity extends AppCompatActivity {
     static CustomViewPager modeViewPager;
 
     public static StickerView stickerView;
+    public static PaintView paintView;
+
     private SaveStickersTask saveStickersTask;
+    private SavePaintTask savePaintTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,12 +101,17 @@ public class MainActivity extends AppCompatActivity {
         stickerView = new StickerView(this);
         stickerView = findViewById(R.id.stickerView);
 
+        // 繪圖畫布預覽
+        paintView = new PaintView(this);
+        paintView = findViewById(R.id.paintView);
+
 
         btnPreview = findViewById(R.id.btnPreview);
         btnPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 processSticker();
+                savePaintImage();
             }
         });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -132,6 +139,18 @@ public class MainActivity extends AppCompatActivity {
 
     public static void setMode(int modeNumber) {
         isEdit = true;
+        switch (modeNumber) {
+            case MODE_STICKERS: {
+                stickerView.setVisibility(View.VISIBLE);
+                MODE_STATE = MODE_STICKERS;
+                break;
+            }
+            case MODE_PAINT: {
+                paintView.setVisibility(View.VISIBLE);
+                MODE_STATE = MODE_PAINT;
+                break;
+            }
+        }
         rvModeList.setVisibility(View.INVISIBLE);
         modeViewPager.setVisibility(View.VISIBLE);
         modeViewPager.setCurrentItem(modeNumber);
@@ -143,6 +162,15 @@ public class MainActivity extends AppCompatActivity {
         }
         saveStickersTask = new SaveStickersTask(this);
         saveStickersTask.execute(sourceBitmap);
+    }
+
+    public void savePaintImage() {
+        if (savePaintTask != null && !savePaintTask.isCancelled()) {
+            savePaintTask.cancel(true);
+        }
+
+        savePaintTask = new SavePaintTask(this);
+        savePaintTask.execute(sourceBitmap);
     }
 
     public void previewSticker(Bitmap previewSticker) {
@@ -168,6 +196,18 @@ public class MainActivity extends AppCompatActivity {
             isEdit = false;
             rvModeList.setVisibility(View.VISIBLE);
             modeViewPager.setVisibility(View.INVISIBLE);
+            switch (MODE_STATE) {
+                case MODE_STICKERS: {
+                    stickerView.setVisibility(View.GONE);
+                    break;
+                }
+                case MODE_PAINT: {
+                    paintView.setVisibility(View.GONE);
+                    break;
+                }
+            }
+
+            MODE_STATE = MODE_NONE;
             Toast.makeText(this, "返回", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -193,6 +233,37 @@ public class MainActivity extends AppCompatActivity {
         public void onPostResult(Bitmap result) {
             previewSticker(result);
             stickerView.clear();
+        }
+    }
+
+    private final class SavePaintTask extends StickerTask {
+
+        public SavePaintTask(MainActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        public void handleImage(Canvas canvas, Matrix m) {
+            float[] f = new float[9];
+            m.getValues(f);
+            int dx = (int) f[Matrix.MTRANS_X];
+            int dy = (int) f[Matrix.MTRANS_Y];
+            float scale_x = f[Matrix.MSCALE_X];
+            float scale_y = f[Matrix.MSCALE_Y];
+            canvas.save();
+            canvas.translate(dx, dy);
+            canvas.scale(scale_x, scale_y);
+
+            if (paintView.getPaintBit() != null) {
+                canvas.drawBitmap(paintView.getPaintBit(), 0, 0, null);
+            }
+            canvas.restore();
+        }
+
+        @Override
+        public void onPostResult(Bitmap result) {
+            previewSticker(result);
+            paintView.reset();
         }
     }
 }
