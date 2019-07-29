@@ -1,19 +1,20 @@
 package ga.fliptech.imageeditor.imageeditor.fragment;
 
-import android.content.Context;
-import android.net.Uri;
+
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.SeekBar;
+import androidx.fragment.app.Fragment;
+import ga.fliptech.imageeditor.MainActivity;
 import ga.fliptech.imageeditor.R;
 
-
 public class RotateFragment extends Fragment {
+    private static final String TAG = "RotateFragment";
+
+    SeekBar sbRotateDegree;
+    View mView;
 
     public RotateFragment() {
     }
@@ -31,8 +32,33 @@ public class RotateFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_rotate, container, false);
+        mView = inflater.inflate(R.layout.fragment_rotate, container, false);
+
+        MainActivity.rotateImageView.addBit(
+                MainActivity.sourceBitmap,
+                MainActivity.imageZoom.getBitmapRect()
+        );
+        MainActivity.rotateImageView.reset();
+
+        sbRotateDegree = mView.findViewById(R.id.sbRotateDegree);
+        sbRotateDegree.setProgress(0);
+        sbRotateDegree.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                MainActivity.rotateImageView.rotateImage(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        return mView;
     }
 
 }

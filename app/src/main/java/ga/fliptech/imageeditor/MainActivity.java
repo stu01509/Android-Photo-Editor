@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +27,7 @@ import com.bumptech.glide.Glide;
 import java.util.LinkedHashMap;
 
 import ga.fliptech.imageeditor.imageeditor.Paint.PaintView;
+import ga.fliptech.imageeditor.imageeditor.Rotate.RotateImageView;
 import ga.fliptech.imageeditor.imageeditor.Sticker.StickerItem;
 import ga.fliptech.imageeditor.imageeditor.Sticker.StickerTask;
 import ga.fliptech.imageeditor.imageeditor.Sticker.StickerView;
@@ -59,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
     public BeautyFragment mBeautyFragment;
     public RotateFragment mRotateFragment;
 
-    public ImageViewTouch imageZoom;
-    Bitmap sourceBitmap;
+    public static ImageViewTouch imageZoom;
+    public static Bitmap sourceBitmap;
 
     Button btnPreview;
 
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     public static StickerView stickerView;
     public static PaintView paintView;
     public static TextStickerView textStickerView;
+    public static RotateImageView rotateImageView;
 
     private SaveStickersTask saveStickersTask;
     private SavePaintTask savePaintTask;
@@ -119,14 +124,36 @@ public class MainActivity extends AppCompatActivity {
         textStickerView = new TextStickerView(this);
         textStickerView = findViewById(R.id.textStickerView);
 
+        // ImageView 圖片選轉
+        rotateImageView = new RotateImageView(this);
+        rotateImageView = findViewById(R.id.rotateImageView);
 
         btnPreview = findViewById(R.id.btnPreview);
         btnPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                processSticker();
-                savePaintImage();
-                saveTextSticker();
+
+                switch (MODE_STATE) {
+                    case MODE_STICKERS: {
+                        processSticker();
+                        break;
+                    }
+                    case MODE_PAINT: {
+                        savePaintImage();
+                        break;
+                    }
+                    case MODE_FILTER: {
+                        break;
+                    }
+                    case MODE_TEXT: {
+                        saveTextSticker();
+                        break;
+                    }
+                    case MODE_ROTATE: {
+                        saveRotate();
+                        break;
+                    }
+                }
             }
         });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -175,6 +202,19 @@ public class MainActivity extends AppCompatActivity {
                 MODE_STATE = MODE_TEXT;
                 break;
             }
+            case MODE_BEAUTY: {
+//                paintView.setVisibility(View.VISIBLE);
+                MODE_STATE = MODE_BEAUTY;
+                break;
+            }
+            case MODE_ROTATE: {
+                rotateImageView.setVisibility(View.VISIBLE);
+                // 圖片旋轉 會直接繪製一張新的 Bitmap
+                // 所以需將最底部的 imageZoom 隱藏
+                imageZoom.setVisibility(View.GONE);
+                MODE_STATE = MODE_ROTATE;
+                break;
+            }
         }
         rvModeList.setVisibility(View.INVISIBLE);
         modeViewPager.setVisibility(View.VISIBLE);
@@ -205,6 +245,11 @@ public class MainActivity extends AppCompatActivity {
 
         saveTextStickerTask = new SaveTextStickerTask(this);
         saveTextStickerTask.execute(sourceBitmap);
+    }
+
+    public void saveRotate() {
+        SaveRotateImageTask task = new SaveRotateImageTask();
+        task.execute(sourceBitmap);
     }
 
     public void previewSticker(Bitmap previewSticker) {
@@ -245,6 +290,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case MODE_TEXT: {
                     textStickerView.setVisibility(View.GONE);
+                    break;
+                }
+                case MODE_BEAUTY: {
+//                    paintView.setVisibility(View.GONE);
+                    break;
+                }
+                case MODE_ROTATE: {
+                    rotateImageView.setVisibility(View.GONE);
+                    // 圖片旋轉 會直接繪製一張新的 Bitmap
+                    // 結束後 需將最底部的 imageZoom 顯示
+                    imageZoom.setVisibility(View.VISIBLE);
                     break;
                 }
             }
@@ -337,6 +393,61 @@ public class MainActivity extends AppCompatActivity {
         public void onPostResult(Bitmap result) {
             textStickerView.clearTextContent();
             textStickerView.resetView();
+            previewSticker(result);
+        }
+    }
+
+    private final class SaveRotateImageTask extends AsyncTask<Bitmap, Void, Bitmap> {
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+        @Override
+        protected void onCancelled(Bitmap result) {
+            super.onCancelled(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @SuppressWarnings("WrongThread")
+        @Override
+        protected Bitmap doInBackground(Bitmap... params) {
+            RectF imageRect = rotateImageView.getImageNewRect();
+            Bitmap originBit = params[0];
+            Bitmap result = Bitmap.createBitmap((int) imageRect.width(),
+                    (int) imageRect.height(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(result);
+            int w = originBit.getWidth() >> 1;
+            int h = originBit.getHeight() >> 1;
+            float centerX = imageRect.width() / 2;
+            float centerY = imageRect.height() / 2;
+
+            float left = centerX - w;
+            float top = centerY - h;
+
+            RectF dst = new RectF(left, top, left + originBit.getWidth(), top
+                    + originBit.getHeight());
+            canvas.save();
+
+            canvas.rotate(rotateImageView.getRotateAngle(), imageRect.width() / 2,
+                    imageRect.height() / 2);
+
+            canvas.drawBitmap(originBit, new Rect(0, 0, originBit.getWidth(),
+                    originBit.getHeight()), dst, null);
+            canvas.restore();
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            super.onPostExecute(result);
+            if (result == null)
+                return;
             previewSticker(result);
         }
     }
