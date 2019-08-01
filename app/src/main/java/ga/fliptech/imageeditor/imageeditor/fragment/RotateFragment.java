@@ -35,7 +35,7 @@ public class RotateFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_rotate, container, false);
 
         MainActivity.rotateImageView.addBit(
-                MainActivity.sourceBitmap,
+                MainActivity.editBitmap,
                 MainActivity.imageZoom.getBitmapRect()
         );
         MainActivity.rotateImageView.reset();
