@@ -5,34 +5,49 @@
     android:id="@+id/wrapperRl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    android:background="#000"
+    tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btnPreview"
+    <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="產生"/>
+        android:background="#fff"
+        android:elevation="4dp">
+
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:singleLine="true"
+            android:text="相片編輯"
+            android:textColor="#000"
+            android:textSize="20dp" />
+
+    </androidx.appcompat.widget.Toolbar>
 
     <ga.fliptech.imageeditor.imageeditor.imagezoom.ImageViewTouch
         android:id="@+id/imageZoom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
         android:layout_gravity="center"
-        android:layout_marginBottom="100dp"/>
+        android:layout_marginBottom="100dp" />
 
     <ga.fliptech.imageeditor.imageeditor.Sticker.StickerView
         android:id="@+id/stickerView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginBottom="100dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ga.fliptech.imageeditor.imageeditor.Paint.PaintView
         android:id="@+id/paintView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginBottom="100dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ga.fliptech.imageeditor.imageeditor.Text.TextStickerView
         android:id="@+id/textStickerView"
