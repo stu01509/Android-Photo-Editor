@@ -5,12 +5,27 @@
     android:layout_height="match_parent"
     tools:context=".imageeditor.fragment.RotateFragment">
 
-    <SeekBar
-        android:id="@+id/sbRotateDegree"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:progress="0"
-        android:max="360"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="旋轉"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <SeekBar
+            android:id="@+id/sbRotateDegree"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:progress="0"
+            android:max="360"/>
+
+    </LinearLayout>
 
 </RelativeLayout>
