@@ -1,29 +1,20 @@
 package ga.fliptech.imageeditor.imageeditor.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
-
-import ga.fliptech.imageeditor.MainActivity;
 import ga.fliptech.imageeditor.R;
 import ga.fliptech.imageeditor.imageeditor.fragment.StickerFragment;
 
 public class StickerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
-    private static final String TAG = "StickerListAdapter";
     public ArrayList<Integer> stickerList = new ArrayList<Integer>();
+    private Context context;
 
     public StickerListAdapter(Context context) {
         this.context = context;
@@ -40,7 +31,7 @@ public class StickerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-        ViewHolder viewHolder = (ViewHolder) holder;
+        final ViewHolder viewHolder = (ViewHolder) holder;
         Glide.with(context).load(stickerList.get(position)).into(viewHolder.ivSticker);
         viewHolder.ivSticker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,10 +55,12 @@ public class StickerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
+    // 貼圖選擇
     public void selectSticker(int sticker) {
         StickerFragment.newInstance().selectedStickerItem(context, sticker);
     }
 
+    // 載入貼圖種類
     public void initSticker(String stickerType) {
         stickerList.clear();
         switch (stickerType) {
