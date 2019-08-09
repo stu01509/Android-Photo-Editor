@@ -12,9 +12,8 @@ import ga.fliptech.imageeditor.imageeditor.fragment.PaintFragment;
 import ga.fliptech.imageeditor.imageeditor.fragment.TextFragment;
 
 public class ColorListAdapter extends RecyclerView.Adapter {
-    private static final String TAG = "ColorListAdapter";
-    public static String[] colorList = {"#F44336", "#FF5722", "#FFEB3B", "#8BC34A", "#4CAF50", "#03A9F4", "#2196F3",
-    "#3F51B5", "#673AB7", "#9C27B0", "#795548", "#9E9E9E", "#607D8B", "#000000"};
+    public static String[] colorList = {"#FFFFFF", "#000000", "#FF0000", "#FF5722", "#FFEB3B", "#8BC34A", "#4CAF50", "#03A9F4", "#2196F3",
+    "#3F51B5", "#673AB7", "#9C27B0", "#795548", "#9E9E9E", "#607D8B"};
 
     public ColorListAdapter() {
     }
