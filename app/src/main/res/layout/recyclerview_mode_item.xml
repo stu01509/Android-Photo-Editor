@@ -26,7 +26,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_below="@+id/ivModeIcon"
-            android:textColor="#ddd"
             android:textSize="18sp" />
     </LinearLayout>
 
